@@ -15,6 +15,8 @@
   th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; font-size: 14px; }
   th { background: #007bff; color: white; }
   tr:hover { background: #f9f9f9; }
+  .delete-btn { padding: 6px 10px; border: 1px solid #dc3545; background: #fff; color: #dc3545; border-radius: 6px; cursor: pointer; }
+  .delete-btn:hover { background: #dc3545; color: #fff; }
 </style>
 </head>
 <body>
@@ -63,6 +65,7 @@
         <th>Format</th>
         <th>Dicke</th>
         <th>ArtNr</th>
+        <th>Aktion</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -71,7 +74,7 @@
 
 <script>
 // === deine Web-App-URL hier eintragen ===
-const scriptURL = "https://script.google.com/macros/s/AKfycbyw97ZZzjleYFFoM9OtlDCq0nTtxSQULDs8Hf9pwJwYhOndNLqwRyGw3r8ys3ytt9LF/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbx2QIfcMMAAxp2GSzs2yhQGwYWGdy3YV_QLFoF0ySuIT2MD3fjTldc10dSEzd8VwI4D/exec";
 
 document.getElementById("bestellForm").addEventListener("submit", function (e) {
   e.preventDefault();
@@ -97,8 +100,6 @@ function ladeBestellungen() {
       const tbody = document.querySelector("#bestellTabelle tbody");
       tbody.innerHTML = "";
       daten.forEach(zeile => {
-        // Wir lesen die Schlüssel exakt wie im Sheet (Zeile 3),
-        // bieten aber Fallbacks auf die Formularnamen an.
         const bereich = zeile["Bereich"] || "";
         const anzahl  = zeile["Anzahl"] || "";
         const produkt = zeile["Produkt"] || "";
@@ -106,6 +107,7 @@ function ladeBestellungen() {
         const format  = zeile["Format"] || "";
         const dicke   = zeile["Dicke / Größe"] || zeile["Dicke"] || "";
         const artnr   = zeile["Art.-Nummer"] || zeile["ArtNr"] || "";
+        const rowNum  = zeile["_row"]; // reale Zeilennummer für Löschen
 
         const tr = document.createElement("tr");
         tr.innerHTML = `
@@ -116,12 +118,33 @@ function ladeBestellungen() {
           <td>${format}</td>
           <td>${dicke}</td>
           <td>${artnr}</td>
+          <td><button class="delete-btn" data-row="${rowNum}">Löschen</button></td>
         `;
         tbody.appendChild(tr);
       });
     })
     .catch(err => console.error("Fehler beim Laden:", err));
 }
+
+// Event-Delegation für Lösch-Buttons
+document.querySelector("#bestellTabelle tbody").addEventListener("click", function (e) {
+  const btn = e.target.closest(".delete-btn");
+  if (!btn) return;
+
+  const row = btn.dataset.row;
+  if (!row) return;
+
+  if (!confirm("Diesen Eintrag wirklich löschen?")) return;
+
+  const params = new URLSearchParams({ action: "delete", row });
+  fetch(scriptURL, { method: "POST", body: params })
+    .then(res => res.json().catch(() => ({})))
+    .then(() => ladeBestellungen())
+    .catch(err => {
+      console.error("Fehler beim Löschen:", err);
+      alert("Löschen fehlgeschlagen");
+    });
+});
 
 document.addEventListener("DOMContentLoaded", ladeBestellungen);
 </script>
