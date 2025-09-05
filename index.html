@@ -4,76 +4,17 @@
 <meta charset="UTF-8">
 <title>Bestellliste</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #f0f2f5;
-    margin: 0;
-    padding: 40px 0;
-    display: flex;
-    justify-content: center;
-  }
-  .container {
-    max-width: 800px;
-    width: 100%;
-    background: #fff;
-    padding: 25px 30px;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-  }
-  h1, h2 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  form label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: bold;
-    color: #444;
-  }
-  form input, form select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 14px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 15px;
-  }
-  form button {
-    background: #007bff;
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    width: 100%;
-    font-size: 16px;
-    font-weight: bold;
-  }
-  form button:hover {
-    background: #0056b3;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-    background: #fff;
-    border-radius: 6px;
-    overflow: hidden;
-  }
-  th, td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    text-align: left;
-    font-size: 14px;
-  }
-  th {
-    background: #007bff;
-    color: white;
-  }
-  tr:hover {
-    background: #f9f9f9;
-  }
+  body { font-family: Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 40px 0; display: flex; justify-content: center; }
+  .container { max-width: 800px; width: 100%; background: #fff; padding: 25px 30px; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,0.1); }
+  h1, h2 { text-align: center; color: #333; margin-bottom: 20px; }
+  form label { display: block; margin-bottom: 6px; font-weight: bold; color: #444; }
+  form input, form select { width: 100%; padding: 10px; margin-bottom: 14px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; }
+  form button { background: #007bff; color: white; padding: 12px; border: none; border-radius: 6px; cursor: pointer; width: 100%; font-size: 16px; font-weight: bold; }
+  form button:hover { background: #0056b3; }
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #fff; border-radius: 6px; overflow: hidden; }
+  th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; font-size: 14px; }
+  th { background: #007bff; color: white; }
+  tr:hover { background: #f9f9f9; }
 </style>
 </head>
 <body>
@@ -129,9 +70,10 @@
 </div>
 
 <script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbx2QIfcMMAAxp2GSzs2yhQGwYWGdy3YV_QLFoF0ySuIT2MD3fjTldc10dSEzd8VwI4D/exec"; 
+// === deine Web-App-URL hier eintragen ===
+const scriptURL = "https://script.google.com/macros/s/AKfycbyw97ZZzjleYFFoM9OtlDCq0nTtxSQULDs8Hf9pwJwYhOndNLqwRyGw3r8ys3ytt9LF/exec";
 
-document.getElementById("bestellForm").addEventListener("submit", function(e) {
+document.getElementById("bestellForm").addEventListener("submit", function (e) {
   e.preventDefault();
   const formData = new FormData(this);
   const params = new URLSearchParams(formData);
@@ -140,7 +82,7 @@ document.getElementById("bestellForm").addEventListener("submit", function(e) {
     .then(res => res.text())
     .then(() => {
       this.reset();
-      ladeBestellungen(); // sofort neu laden
+      ladeBestellungen();
     })
     .catch(err => {
       console.error("Fehler:", err);
@@ -155,15 +97,25 @@ function ladeBestellungen() {
       const tbody = document.querySelector("#bestellTabelle tbody");
       tbody.innerHTML = "";
       daten.forEach(zeile => {
+        // Wir lesen die Schlüssel exakt wie im Sheet (Zeile 3),
+        // bieten aber Fallbacks auf die Formularnamen an.
+        const bereich = zeile["Bereich"] || "";
+        const anzahl  = zeile["Anzahl"] || "";
+        const produkt = zeile["Produkt"] || "";
+        const farbe   = zeile["Farbe / Art"] || zeile["Farbe"] || "";
+        const format  = zeile["Format"] || "";
+        const dicke   = zeile["Dicke / Größe"] || zeile["Dicke"] || "";
+        const artnr   = zeile["Art.-Nummer"] || zeile["ArtNr"] || "";
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${zeile[0] || ""}</td>
-          <td>${zeile[1] || ""}</td>
-          <td>${zeile[2] || ""}</td>
-          <td>${zeile[3] || ""}</td>
-          <td>${zeile[4] || ""}</td>
-          <td>${zeile[5] || ""}</td>
-          <td>${zeile[6] || ""}</td>
+          <td>${bereich}</td>
+          <td>${anzahl}</td>
+          <td>${produkt}</td>
+          <td>${farbe}</td>
+          <td>${format}</td>
+          <td>${dicke}</td>
+          <td>${artnr}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -171,7 +123,6 @@ function ladeBestellungen() {
     .catch(err => console.error("Fehler beim Laden:", err));
 }
 
-// Beim Laden der Seite direkt alle Zeilen anzeigen
 document.addEventListener("DOMContentLoaded", ladeBestellungen);
 </script>
 
