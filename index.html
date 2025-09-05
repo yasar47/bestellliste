@@ -6,48 +6,49 @@
 <style>
   body {
     font-family: Arial, sans-serif;
-    background: #f8f9fa;
+    background: #f0f2f5;
     margin: 0;
-    padding: 20px;
+    padding: 40px 0;
     display: flex;
     justify-content: center;
   }
   .container {
-    max-width: 800px;
+    max-width: 700px;
     width: 100%;
     background: #fff;
-    padding: 20px 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
   }
   h1, h2 {
     text-align: center;
-    color: #444;
-  }
-  form {
+    color: #333;
     margin-bottom: 20px;
   }
   form label {
     display: block;
     margin-bottom: 6px;
     font-weight: bold;
+    color: #444;
   }
   form input, form select {
     width: 100%;
-    padding: 8px;
+    padding: 10px;
     margin-bottom: 14px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 6px;
+    font-size: 15px;
   }
   form button {
     background: #007bff;
     color: white;
-    padding: 10px 15px;
+    padding: 12px;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     width: 100%;
     font-size: 16px;
+    font-weight: bold;
   }
   form button:hover {
     background: #0056b3;
@@ -55,20 +56,23 @@
   table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 15px;
     background: #fff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border-radius: 6px;
+    overflow: hidden;
   }
   th, td {
     padding: 10px;
     border-bottom: 1px solid #ddd;
     text-align: left;
+    font-size: 14px;
   }
   th {
     background: #007bff;
     color: white;
   }
   tr:hover {
-    background: #f1f1f1;
+    background: #f9f9f9;
   }
 </style>
 </head>
@@ -125,7 +129,8 @@
 </div>
 
 <script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbx2QIfcMMAAxp2GSzs2yhQGwYWGdy3YV_QLFoF0ySuIT2MD3fjTldc10dSEzd8VwI4D/exec"; 
+const scriptURL = "HIER_DEINE_WEBAPP_URL_EINFÜGEN"; 
+// z.B. https://script.google.com/macros/s/AKfycbx.../exec
 
 document.getElementById("bestellForm").addEventListener("submit", function(e) {
   e.preventDefault();
@@ -134,10 +139,9 @@ document.getElementById("bestellForm").addEventListener("submit", function(e) {
 
   fetch(scriptURL, { method: "POST", body: params })
     .then(res => res.text())
-    .then(text => {
-      console.log("Antwort:", text);
+    .then(() => {
       this.reset();
-      ladeBestellungen();
+      ladeBestellungen(); // sofort neu laden
     })
     .catch(err => {
       console.error("Fehler:", err);
@@ -168,7 +172,10 @@ function ladeBestellungen() {
     .catch(err => console.error("Fehler beim Laden:", err));
 }
 
-document.addEventListener("DOMContentLoaded", ladeBestellungen);
+document.addEventListener("DOMContentLoaded", () => {
+  ladeBestellungen();
+  setInterval(ladeBestellungen, 1000); // 🔄 alle 10 Sekunden aktualisieren
+});
 </script>
 
 </body>
