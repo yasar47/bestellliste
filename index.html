@@ -1,114 +1,3 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <title>Bestellliste</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      background: #f5f5f5;
-    }
-    h1, h2 {
-      text-align: center;
-    }
-    form {
-      max-width: 500px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    input, select, button {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    button {
-      margin-top: 15px;
-      background: #4CAF50;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #45a049;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      margin-top: 20px;
-      background: white;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-    #listeContainer {
-      max-width: 900px;
-      margin: auto;
-    }
-  </style>
-</head>
-<body>
-
-<h1>Bestellformular</h1>
-
-<form id="bestellForm">
-  <label for="bereich">Bereich</label>
-  <input type="text" name="Bereich" id="bereich" required>
-
-  <label for="anzahl">Anzahl</label>
-  <input type="number" name="Anzahl" id="anzahl" required>
-
-  <label for="produkt">Produkt</label>
-  <input type="text" name="Produkt" id="produkt" required>
-
-  <label for="farbe">Farbe / Art</label>
-  <input type="text" name="Farbe" id="farbe">
-
-  <label for="format">Format</label>
-  <input type="text" name="Format" id="format">
-
-  <label for="dicke">Dicke / Größe</label>
-  <input type="text" name="Dicke" id="dicke">
-
-  <label for="artnr">Art.-Nummer</label>
-  <input type="text" name="ArtNr" id="artnr">
-
-  <button type="submit">Absenden</button>
-</form>
-
-<h2>Aktuelle Bestellungen</h2>
-<div id="listeContainer">
-  <table id="bestellTabelle">
-    <thead>
-      <tr>
-        <th>Bereich</th>
-        <th>Anzahl</th>
-        <th>Produkt</th>
-        <th>Farbe / Art</th>
-        <th>Format</th>
-        <th>Dicke / Größe</th>
-        <th>Art.-Nummer</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</div>
-
 <script>
 const scriptURL = "https://script.google.com/macros/s/AKfycbx2QIfcMMAAxp2GSzs2yhQGwYWGdy3YV_QLFoF0ySuIT2MD3fjTldc10dSEzd8VwI4D/exec"; 
 
@@ -124,9 +13,9 @@ document.getElementById("bestellForm").addEventListener("submit", function(e) {
   })
   .then(res => res.text())
   .then(text => {
-    alert("Bestellung gespeichert!");
+    console.log("Antwort:", text);
     this.reset();
-    ladeBestellungen(); // Liste neu laden
+    ladeBestellungen(); // ⬅ direkt nach dem Speichern neu laden
   })
   .catch(err => {
     console.error("Fehler:", err);
@@ -144,13 +33,13 @@ function ladeBestellungen() {
       daten.forEach(zeile => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${zeile.Bereich || ""}</td>
-          <td>${zeile.Anzahl || ""}</td>
-          <td>${zeile.Produkt || ""}</td>
-          <td>${zeile.Farbe || ""}</td>
-          <td>${zeile.Format || ""}</td>
-          <td>${zeile.Dicke || ""}</td>
-          <td>${zeile.ArtNr || ""}</td>
+          <td>${zeile["Bereich"] || ""}</td>
+          <td>${zeile["Anzahl"] || ""}</td>
+          <td>${zeile["Produkt"] || ""}</td>
+          <td>${zeile["Farbe"] || ""}</td>
+          <td>${zeile["Format"] || ""}</td>
+          <td>${zeile["Dicke"] || ""}</td>
+          <td>${zeile["ArtNr"] || ""}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -159,9 +48,5 @@ function ladeBestellungen() {
 }
 
 // Beim Laden der Seite direkt Liste anzeigen
-ladeBestellungen();
+document.addEventListener("DOMContentLoaded", ladeBestellungen);
 </script>
-
-</body>
-</html>
-
