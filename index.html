@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Bestellformular</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        margin: 0;
+        padding: 20px;
+    }
+    h2, h3 {
+        text-align: center;
+        color: #333;
+    }
+    form {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 600px;
+        margin: 0 auto;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        font-size: 18px;
+    }
+    label {
+        display: block;
+        margin-top: 15px;
+        font-weight: bold;
+        color: #000;
+    }
+    input, select, button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 5px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 18px;
+    }
+    button {
+        background-color: #0078D4;
+        color: white;
+        border: none;
+        margin-top: 20px;
+        cursor: pointer;
+        font-size: 20px;
+        font-weight: bold;
+    }
+    button:hover {
+        background-color: #005A9E;
+    }
+    #output {
+        max-width: 900px;
+        margin: 30px auto 0;
+        background: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 18px;
+    }
+    th, td {
+        border: 2px solid #ccc;
+        padding: 12px;
+        text-align: left;
+    }
+    th {
+        background-color: #0078D4;
+        color: white;
+    }
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    .delete-btn {
+        background-color: #d9534f;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .delete-btn:hover {
+        background-color: #b52b27;
+    }
+</style>
+</head>
+<body>
+
+<h2>Bestellformular</h2>
+
+<form id="orderForm">
+    <label for="bereich">Bereich</label>
+    <input type="text" id="bereich" name="bereich" required>
+
+    <label for="anzahl">Anzahl</label>
+    <input type="number" id="anzahl" name="anzahl" required>
+
+    <label for="produkt">Produkt</label>
+    <input type="text" id="produkt" name="produkt" required>
+
+    <label for="farbe">Farbe / Art</label>
+    <input type="text" id="farbe" name="farbe" required>
+
+    <label for="format">Format</label>
+    <select id="format" name="format" required>
+        <option value="">Bitte ausw&auml;hlen</option>
+        <option value="DIN A0">DIN A0</option>
+        <option value="DIN A1">DIN A1</option>
+        <option value="DIN A2">DIN A2</option>
+        <option value="DIN A3">DIN A3</option>
+        <option value="DIN A4">DIN A4</option>
+        <option value="DIN A5">DIN A5</option>
+        <option value="DIN A6">DIN A6</option>
+        <option value="DIN A7">DIN A7</option>
+        <option value="DIN A8">DIN A8</option>
+        <option value="DIN A9">DIN A9</option>
+        <option value="DIN A10">DIN A10</option>
+    </select>
+
+    <label for="dicke">Dicke / Gr&ouml;&szlig;e</label>
+    <input type="text" id="dicke" name="dicke" required>
+
+    <label for="artnr">Art.-Nummer</label>
+    <input type="text" id="artnr" name="artnr" required>
+
+    <button type="submit">Hinzuf&uuml;gen</button>
+</form>
+
+<div id="output">
+    <h3>Gespeicherte Bestellungen</h3>
+    <div id="entries"></div>
+</div>
+
+<script>
+    const form = document.getElementById('orderForm');
+    const entriesDiv = document.getElementById('entries');
+
+    document.addEventListener('DOMContentLoaded', loadEntries);
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const eintrag = {
+            bereich: document.getElementById('bereich').value,
+            anzahl: document.getElementById('anzahl').value,
+            produkt: document.getElementById('produkt').value,
+            farbe: document.getElementById('farbe').value,
+            format: document.getElementById('format').value,
+            dicke: document.getElementById('dicke').value,
+            artnr: document.getElementById('artnr').value
+        };
+
+        let eintraege = JSON.parse(localStorage.getItem('bestellungen')) || [];
+        eintraege.push(eintrag);
+        localStorage.setItem('bestellungen', JSON.stringify(eintraege));
+
+        form.reset();
+        loadEntries();
+    });
+
+    function loadEntries() {
+        let eintraege = JSON.parse(localStorage.getItem('bestellungen')) || [];
+        if (eintraege.length === 0) {
+            entriesDiv.innerHTML = '<p style="font-size:18px;">Noch keine Bestellungen vorhanden.</p>';
+            return;
+        }
+
+        let table = `<table>
+            <tr>
+                <th>Bereich</th>
+                <th>Anzahl</th>
+                <th>Produkt</th>
+                <th>Farbe / Art</th>
+                <th>Format</th>
+                <th>Dicke / Gr&ouml;&szlig;e</th>
+                <th>Art.-Nr.</th>
+                <th>Aktion</th>
+            </tr>`;
+
+        eintraege.forEach((item, index) => {
+            table += `
+            <tr>
+                <td>${item.bereich}</td>
+                <td>${item.anzahl}</td>
+                <td>${item.produkt}</td>
+                <td>${item.farbe}</td>
+                <td>${item.format}</td>
+                <td>${item.dicke}</td>
+                <td>${item.artnr}</td>
+                <td><button class="delete-btn" onclick="deleteEntry(${index})">L&ouml;schen</button></td>
+            </tr>`;
+        });
+
+        table += `</table>`;
+        entriesDiv.innerHTML = table;
+    }
+
+    function deleteEntry(index) {
+        let eintraege = JSON.parse(localStorage.getItem('bestellungen')) || [];
+        eintraege.splice(index, 1);
+        localStorage.setItem('bestellungen', JSON.stringify(eintraege));
+        loadEntries();
+    }
+</script>
+
+</body>
+</html>
