@@ -1,99 +1,145 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Bestellliste</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    form { margin-bottom: 20px; }
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background-color: #f2f2f2; }
-  </style>
+<meta charset="UTF-8">
+<title>Bestellliste</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background: #f8f9fa;
+    color: #333;
+  }
+  h1, h2 {
+    color: #444;
+  }
+  form {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+  form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  form input {
+    width: 100%;
+    padding: 6px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  form button {
+    background: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  form button:hover {
+    background: #0056b3;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  th, td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+  }
+  th {
+    background: #007bff;
+    color: white;
+  }
+  tr:hover {
+    background: #f1f1f1;
+  }
+</style>
 </head>
 <body>
 
-  <h1>Neue Bestellung</h1>
-  <form id="bestellForm">
-    <label>Bereich: <input type="text" name="Bereich" required></label><br><br>
-    <label>Anzahl: <input type="number" name="Anzahl" required></label><br><br>
-    <label>Produkt: <input type="text" name="Produkt" required></label><br><br>
-    <label>Farbe: <input type="text" name="Farbe"></label><br><br>
-    <label>Format: <input type="text" name="Format"></label><br><br>
-    <label>Dicke: <input type="text" name="Dicke"></label><br><br>
-    <label>ArtNr: <input type="text" name="ArtNr"></label><br><br>
-    <button type="submit">Bestellung speichern</button>
-  </form>
+<h1>Neue Bestellung</h1>
+<form id="bestellForm">
+  <label>Bereich: <input type="text" name="Bereich" required></label>
+  <label>Anzahl: <input type="number" name="Anzahl" required></label>
+  <label>Produkt: <input type="text" name="Produkt" required></label>
+  <label>Farbe: <input type="text" name="Farbe"></label>
+  <label>Format: <input type="text" name="Format"></label>
+  <label>Dicke: <input type="text" name="Dicke"></label>
+  <label>ArtNr: <input type="text" name="ArtNr"></label>
+  <button type="submit">Bestellung speichern</button>
+</form>
 
-  <h2>Gespeicherte Bestellungen</h2>
-  <table id="bestellTabelle">
-    <thead>
-      <tr>
-        <th>Bereich</th>
-        <th>Anzahl</th>
-        <th>Produkt</th>
-        <th>Farbe</th>
-        <th>Format</th>
-        <th>Dicke</th>
-        <th>ArtNr</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+<h2>Gespeicherte Bestellungen</h2>
+<table id="bestellTabelle">
+  <thead>
+    <tr>
+      <th>Bereich</th>
+      <th>Anzahl</th>
+      <th>Produkt</th>
+      <th>Farbe</th>
+      <th>Format</th>
+      <th>Dicke</th>
+      <th>ArtNr</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
 
-  <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbx2QIfcMMAAxp2GSzs2yhQGwYWGdy3YV_QLFoF0ySuIT2MD3fjTldc10dSEzd8VwI4D/exec"; 
+<script>
+const scriptURL = "https://script.google.com/macros/s/AKfycbx2QIfcMMAAxp2GSzs2yhQGwYWGdy3YV_QLFoF0ySuIT2MD3fjTldc10dSEzd8VwI4D/exec"; 
 
-    // Formular absenden
-    document.getElementById("bestellForm").addEventListener("submit", function(e) {
-      e.preventDefault();
+document.getElementById("bestellForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const formData = new FormData(this);
+  const params = new URLSearchParams(formData);
 
-      const formData = new FormData(this);
-      const params = new URLSearchParams(formData);
-
-      fetch(scriptURL, {
-        method: "POST",
-        body: params
-      })
-      .then(res => res.text())
-      .then(text => {
-        console.log("Antwort:", text);
-        this.reset();
-        ladeBestellungen(); // direkt nach dem Speichern neu laden
-      })
-      .catch(err => {
-        console.error("Fehler:", err);
-        alert("Fehler beim Speichern");
-      });
+  fetch(scriptURL, { method: "POST", body: params })
+    .then(res => res.text())
+    .then(text => {
+      console.log("Antwort:", text);
+      this.reset();
+      ladeBestellungen(); // sofort neu laden
+    })
+    .catch(err => {
+      console.error("Fehler:", err);
+      alert("Fehler beim Speichern");
     });
+});
 
-    // Liste laden
-    function ladeBestellungen() {
-      fetch(scriptURL)
-        .then(res => res.json())
-        .then(daten => {
-          const tbody = document.querySelector("#bestellTabelle tbody");
-          tbody.innerHTML = "";
-          daten.forEach(zeile => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-              <td>${zeile["Bereich"] || ""}</td>
-              <td>${zeile["Anzahl"] || ""}</td>
-              <td>${zeile["Produkt"] || ""}</td>
-              <td>${zeile["Farbe"] || ""}</td>
-              <td>${zeile["Format"] || ""}</td>
-              <td>${zeile["Dicke"] || ""}</td>
-              <td>${zeile["ArtNr"] || ""}</td>
-            `;
-            tbody.appendChild(tr);
-          });
-        })
-        .catch(err => console.error("Fehler beim Laden:", err));
-    }
+function ladeBestellungen() {
+  fetch(scriptURL)
+    .then(res => res.json())
+    .then(daten => {
+      const tbody = document.querySelector("#bestellTabelle tbody");
+      tbody.innerHTML = "";
+      daten.forEach(zeile => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${zeile["Bereich"] || ""}</td>
+          <td>${zeile["Anzahl"] || ""}</td>
+          <td>${zeile["Produkt"] || ""}</td>
+          <td>${zeile["Farbe"] || ""}</td>
+          <td>${zeile["Format"] || ""}</td>
+          <td>${zeile["Dicke"] || ""}</td>
+          <td>${zeile["ArtNr"] || ""}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    })
+    .catch(err => console.error("Fehler beim Laden:", err));
+}
 
-    // Beim Laden der Seite direkt Liste anzeigen
-    document.addEventListener("DOMContentLoaded", ladeBestellungen);
-  </script>
+// Beim Laden der Seite direkt Liste anzeigen
+document.addEventListener("DOMContentLoaded", ladeBestellungen);
+</script>
 
 </body>
 </html>
