@@ -2,50 +2,177 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Bestellungen anzeigen</title>
+<title>Bestellliste</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f0f2f5;
+    margin: 0;
+    padding: 40px 0;
+    display: flex;
+    justify-content: center;
+  }
+  .container {
+    max-width: 800px;
+    width: 100%;
+    background: #fff;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  }
+  h1, h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #444;
+  }
+  form input, form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+  }
+  form button {
+    background: #007bff;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  form button:hover {
+    background: #0056b3;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  th, td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    font-size: 14px;
+  }
+  th {
+    background: #007bff;
+    color: white;
+  }
+  tr:hover {
+    background: #f9f9f9;
+  }
+</style>
 </head>
 <body>
 
-<h1>Bestellungen</h1>
-<button onclick="ladeDaten()">Daten laden</button>
+<div class="container">
+  <h1>Neue Bestellung</h1>
+  <form id="bestellForm">
+    <label>Bereich:
+      <input type="text" name="Bereich" required>
+    </label>
+    <label>Anzahl:
+      <input type="number" name="Anzahl" required>
+    </label>
+    <label>Produkt:
+      <input type="text" name="Produkt" required>
+    </label>
+    <label>Farbe:
+      <input type="text" name="Farbe">
+    </label>
+    <label>Format:
+      <select name="Format" required>
+        <option value="">Bitte wählen</option>
+        <option value="A3">A3</option>
+        <option value="A4">A4</option>
+        <option value="A5">A5</option>
+        <option value="A6">A6</option>
+      </select>
+    </label>
+    <label>Dicke:
+      <input type="text" name="Dicke">
+    </label>
+    <label>ArtNr:
+      <input type="text" name="ArtNr">
+    </label>
+    <button type="submit">Bestellung speichern</button>
+  </form>
 
-<table border="1" id="tabelle">
-  <thead>
-    <tr>
-      <th>Bereich</th>
-      <th>Anzahl</th>
-      <th>Produkt</th>
-      <th>Farbe</th>
-      <th>Format</th>
-      <th>Dicke</th>
-      <th>ArtNr</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+  <h2>Gespeicherte Bestellungen</h2>
+  <table id="bestellTabelle">
+    <thead>
+      <tr>
+        <th>Bereich</th>
+        <th>Anzahl</th>
+        <th>Produkt</th>
+        <th>Farbe</th>
+        <th>Format</th>
+        <th>Dicke</th>
+        <th>ArtNr</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
 
 <script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbx2QIfcMMAAxp2GSzs2yhQGwYWGdy3YV_QLFoF0ySuIT2MD3fjTldc10dSEzd8VwI4D/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbx2QIfcMMAAxp2GSzs2yhQGwYWGdy3YV_QLFoF0ySuIT2MD3fjTldc10dSEzd8VwI4D/exec"; 
 
-function ladeDaten() {
+document.getElementById("bestellForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const formData = new FormData(this);
+  const params = new URLSearchParams(formData);
+
+  fetch(scriptURL, { method: "POST", body: params })
+    .then(res => res.text())
+    .then(() => {
+      this.reset();
+      ladeBestellungen(); // sofort neu laden
+    })
+    .catch(err => {
+      console.error("Fehler:", err);
+      alert("Fehler beim Speichern");
+    });
+});
+
+function ladeBestellungen() {
   fetch(scriptURL)
     .then(res => res.json())
     .then(daten => {
-      const tbody = document.querySelector("#tabelle tbody");
-      tbody.innerHTML = ""; // alte Inhalte löschen
-
+      const tbody = document.querySelector("#bestellTabelle tbody");
+      tbody.innerHTML = "";
       daten.forEach(zeile => {
         const tr = document.createElement("tr");
-        zeile.forEach(wert => {
-          const td = document.createElement("td");
-          td.textContent = wert;
-          tr.appendChild(td);
-        });
+        tr.innerHTML = `
+          <td>${zeile[0] || ""}</td>
+          <td>${zeile[1] || ""}</td>
+          <td>${zeile[2] || ""}</td>
+          <td>${zeile[3] || ""}</td>
+          <td>${zeile[4] || ""}</td>
+          <td>${zeile[5] || ""}</td>
+          <td>${zeile[6] || ""}</td>
+        `;
         tbody.appendChild(tr);
       });
     })
     .catch(err => console.error("Fehler beim Laden:", err));
 }
+
+// Beim Laden der Seite direkt alle Zeilen anzeigen
+document.addEventListener("DOMContentLoaded", ladeBestellungen);
 </script>
 
 </body>
