@@ -70,8 +70,8 @@
 </div>
 
 <script>
-// === deine Web-App-URL hier eintragen ===
-const scriptURL = "https://script.google.com/macros/s/AKfycbx2QIfcMMAAxp2GSzs2yhQGwYWGdy3YV_QLFoF0ySuIT2MD3fjTldc10dSEzd8VwI4D/exec";
+
+  const scriptURL = "https://script.google.com/macros/s/AKfycbx2QIfcMMAAxp2GSzs2yhQGwYWGdy3YV_QLFoF0ySuIT2MD3fjTldc10dSEzd8VwI4D/exec";
 
 document.getElementById("bestellForm").addEventListener("submit", function (e) {
   e.preventDefault();
@@ -97,8 +97,6 @@ function ladeBestellungen() {
       const tbody = document.querySelector("#bestellTabelle tbody");
       tbody.innerHTML = "";
       daten.forEach(zeile => {
-        // Wir lesen die Schlüssel exakt wie im Sheet (Zeile 3),
-        // bieten aber Fallbacks auf die Formularnamen an.
         const bereich = zeile["Bereich"] || "";
         const anzahl  = zeile["Anzahl"] || "";
         const produkt = zeile["Produkt"] || "";
@@ -128,3 +126,4 @@ document.addEventListener("DOMContentLoaded", ladeBestellungen);
 
 </body>
 </html>
+
