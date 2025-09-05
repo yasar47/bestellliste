@@ -95,38 +95,31 @@
 
 <form id="orderForm">
     <label for="bereich">Bereich</label>
-    <input type="text" id="bereich" name="bereich" required>
+    <input type="text" id="bereich" name="Bereich" required>
 
     <label for="anzahl">Anzahl</label>
-    <input type="number" id="anzahl" name="anzahl" required>
+    <input type="number" id="anzahl" name="Anzahl" required>
 
     <label for="produkt">Produkt</label>
-    <input type="text" id="produkt" name="produkt" required>
+    <input type="text" id="produkt" name="Produkt" required>
 
     <label for="farbe">Farbe / Art</label>
-    <input type="text" id="farbe" name="farbe" required>
+    <input type="text" id="farbe" name="Farbe / Art" required>
 
     <label for="format">Format</label>
-    <select id="format" name="format" required>
+    <select id="format" name="Format" required>
         <option value="">Bitte ausw&auml;hlen</option>
-        <option value="DIN A0">DIN A0</option>
-        <option value="DIN A1">DIN A1</option>
-        <option value="DIN A2">DIN A2</option>
         <option value="DIN A3">DIN A3</option>
         <option value="DIN A4">DIN A4</option>
         <option value="DIN A5">DIN A5</option>
         <option value="DIN A6">DIN A6</option>
-        <option value="DIN A7">DIN A7</option>
-        <option value="DIN A8">DIN A8</option>
-        <option value="DIN A9">DIN A9</option>
-        <option value="DIN A10">DIN A10</option>
     </select>
 
     <label for="dicke">Dicke / Gr&ouml;&szlig;e</label>
-    <input type="text" id="dicke" name="dicke" required>
+    <input type="text" id="dicke" name="Dicke / Größe" required>
 
     <label for="artnr">Art.-Nummer</label>
-    <input type="text" id="artnr" name="artnr" required>
+    <input type="text" id="artnr" name="Art.-Nummer" required>
 
     <button type="submit">Hinzuf&uuml;gen</button>
 </form>
@@ -137,75 +130,67 @@
 </div>
 
 <script>
-    const form = document.getElementById('orderForm');
-    const entriesDiv = document.getElementById('entries');
+    const API_URL = "https://script.google.com/macros/s/AKfycbyDnbN2tWjYxArD4CXrGeN5VuRnFUCCKyon029iIZlSTIdRWJ1AwBpTsctRejzqpgjT/exec"; // hier deine Google Apps Script Web-App URL einfügen
 
-    document.addEventListener('DOMContentLoaded', loadEntries);
-
-    form.addEventListener('submit', function(e) {
+    // Formular absenden → POST an Google Sheet
+    document.getElementById('orderForm').addEventListener('submit', function(e) {
         e.preventDefault();
+        const formData = new FormData(this);
+        const data = {};
+        formData.forEach((value, key) => data[key] = value);
 
-        const eintrag = {
-            bereich: document.getElementById('bereich').value,
-            anzahl: document.getElementById('anzahl').value,
-            produkt: document.getElementById('produkt').value,
-            farbe: document.getElementById('farbe').value,
-            format: document.getElementById('format').value,
-            dicke: document.getElementById('dicke').value,
-            artnr: document.getElementById('artnr').value
-        };
-
-        let eintraege = JSON.parse(localStorage.getItem('bestellungen')) || [];
-        eintraege.push(eintrag);
-        localStorage.setItem('bestellungen', JSON.stringify(eintraege));
-
-        form.reset();
-        loadEntries();
+        fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" }
+        })
+        .then(res => res.json())
+        .then(resData => {
+            console.log("Antwort:", resData);
+            this.reset();
+            loadEntries();
+        })
+        .catch(err => console.error("Fehler beim Speichern:", err));
     });
 
+    // Bestellungen laden → GET vom Google Sheet
     function loadEntries() {
-        let eintraege = JSON.parse(localStorage.getItem('bestellungen')) || [];
-        if (eintraege.length === 0) {
-            entriesDiv.innerHTML = '<p style="font-size:18px;">Noch keine Bestellungen vorhanden.</p>';
-            return;
-        }
-
-        let table = `<table>
-            <tr>
-                <th>Bereich</th>
-                <th>Anzahl</th>
-                <th>Produkt</th>
-                <th>Farbe / Art</th>
-                <th>Format</th>
-                <th>Dicke / Gr&ouml;&szlig;e</th>
-                <th>Art.-Nr.</th>
-                <th>Aktion</th>
-            </tr>`;
-
-        eintraege.forEach((item, index) => {
-            table += `
-            <tr>
-                <td>${item.bereich}</td>
-                <td>${item.anzahl}</td>
-                <td>${item.produkt}</td>
-                <td>${item.farbe}</td>
-                <td>${item.format}</td>
-                <td>${item.dicke}</td>
-                <td>${item.artnr}</td>
-                <td><button class="delete-btn" onclick="deleteEntry(${index})">L&ouml;schen</button></td>
-            </tr>`;
-        });
-
-        table += `</table>`;
-        entriesDiv.innerHTML = table;
+        fetch(API_URL)
+            .then(res => res.json())
+            .then(data => {
+                if (!Array.isArray(data) || data.length === 0) {
+                    document.getElementById('entries').innerHTML = '<p style="font-size:18px;">Noch keine Bestellungen vorhanden.</p>';
+                    return;
+                }
+                let table = `<table>
+                    <tr>
+                        <th>Bereich</th>
+                        <th>Anzahl</th>
+                        <th>Produkt</th>
+                        <th>Farbe / Art</th>
+                        <th>Format</th>
+                        <th>Dicke / Gr&ouml;&szlig;e</th>
+                        <th>Art.-Nr.</th>
+                    </tr>`;
+                data.forEach(item => {
+                    table += `
+                    <tr>
+                        <td>${item["Bereich"] || ""}</td>
+                        <td>${item["Anzahl"] || ""}</td>
+                        <td>${item["Produkt"] || ""}</td>
+                        <td>${item["Farbe / Art"] || ""}</td>
+                        <td>${item["Format"] || ""}</td>
+                        <td>${item["Dicke / Größe"] || ""}</td>
+                        <td>${item["Art.-Nummer"] || ""}</td>
+                    </tr>`;
+                });
+                table += `</table>`;
+                document.getElementById('entries').innerHTML = table;
+            })
+            .catch(err => console.error("Fehler beim Laden:", err));
     }
 
-    function deleteEntry(index) {
-        let eintraege = JSON.parse(localStorage.getItem('bestellungen')) || [];
-        eintraege.splice(index, 1);
-        localStorage.setItem('bestellungen', JSON.stringify(eintraege));
-        loadEntries();
-    }
+    document.addEventListener('DOMContentLoaded', loadEntries);
 </script>
 
 </body>
