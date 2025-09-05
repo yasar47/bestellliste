@@ -1,196 +1,168 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<title>Bestellformular</title>
-<style>
+  <meta charset="UTF-8">
+  <title>Bestellliste</title>
+  <style>
     body {
-        font-family: Arial, sans-serif;
-        background: #f4f6f8;
-        margin: 0;
-        padding: 20px;
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f5f5f5;
     }
-    h2, h3 {
-        text-align: center;
-        color: #333;
+    h1, h2 {
+      text-align: center;
     }
     form {
-        background: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        max-width: 600px;
-        margin: 0 auto;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        font-size: 18px;
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     label {
-        display: block;
-        margin-top: 15px;
-        font-weight: bold;
-        color: #000;
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
     }
     input, select, button {
-        width: 100%;
-        padding: 12px;
-        margin-top: 5px;
-        border: 2px solid #ccc;
-        border-radius: 5px;
-        box-sizing: border-box;
-        font-size: 18px;
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
     button {
-        background-color: #0078D4;
-        color: white;
-        border: none;
-        margin-top: 20px;
-        cursor: pointer;
-        font-size: 20px;
-        font-weight: bold;
+      margin-top: 15px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
     }
     button:hover {
-        background-color: #005A9E;
-    }
-    #output {
-        max-width: 900px;
-        margin: 30px auto 0;
-        background: #fff;
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      background: #45a049;
     }
     table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 18px;
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+      background: white;
     }
     th, td {
-        border: 2px solid #ccc;
-        padding: 12px;
-        text-align: left;
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
     }
     th {
-        background-color: #0078D4;
-        color: white;
+      background-color: #f2f2f2;
     }
-    tr:nth-child(even) {
-        background-color: #f9f9f9;
+    #listeContainer {
+      max-width: 900px;
+      margin: auto;
     }
-    .delete-btn {
-        background-color: #d9534f;
-        color: white;
-        border: none;
-        padding: 8px 12px;
-        font-size: 16px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    .delete-btn:hover {
-        background-color: #b52b27;
-    }
-</style>
+  </style>
 </head>
 <body>
 
-<h2>Bestellformular</h2>
+<h1>Bestellformular</h1>
 
-<form id="orderForm">
-    <label for="bereich">Bereich</label>
-    <input type="text" id="bereich" name="Bereich" required>
+<form id="bestellForm">
+  <label for="bereich">Bereich</label>
+  <input type="text" name="Bereich" id="bereich" required>
 
-    <label for="anzahl">Anzahl</label>
-    <input type="number" id="anzahl" name="Anzahl" required>
+  <label for="anzahl">Anzahl</label>
+  <input type="number" name="Anzahl" id="anzahl" required>
 
-    <label for="produkt">Produkt</label>
-    <input type="text" id="produkt" name="Produkt" required>
+  <label for="produkt">Produkt</label>
+  <input type="text" name="Produkt" id="produkt" required>
 
-    <label for="farbe">Farbe / Art</label>
-    <input type="text" id="farbe" name="Farbe / Art" required>
+  <label for="farbe">Farbe / Art</label>
+  <input type="text" name="Farbe" id="farbe">
 
-    <label for="format">Format</label>
-    <select id="format" name="Format" required>
-        <option value="">Bitte ausw&auml;hlen</option>
-        <option value="DIN A3">DIN A3</option>
-        <option value="DIN A4">DIN A4</option>
-        <option value="DIN A5">DIN A5</option>
-        <option value="DIN A6">DIN A6</option>
-    </select>
+  <label for="format">Format</label>
+  <input type="text" name="Format" id="format">
 
-    <label for="dicke">Dicke / Gr&ouml;&szlig;e</label>
-    <input type="text" id="dicke" name="Dicke / Größe" required>
+  <label for="dicke">Dicke / Größe</label>
+  <input type="text" name="Dicke" id="dicke">
 
-    <label for="artnr">Art.-Nummer</label>
-    <input type="text" id="artnr" name="Art.-Nummer" required>
+  <label for="artnr">Art.-Nummer</label>
+  <input type="text" name="ArtNr" id="artnr">
 
-    <button type="submit">Hinzuf&uuml;gen</button>
+  <button type="submit">Absenden</button>
 </form>
 
-<div id="output">
-    <h3>Gespeicherte Bestellungen</h3>
-    <div id="entries"></div>
+<h2>Aktuelle Bestellungen</h2>
+<div id="listeContainer">
+  <table id="bestellTabelle">
+    <thead>
+      <tr>
+        <th>Bereich</th>
+        <th>Anzahl</th>
+        <th>Produkt</th>
+        <th>Farbe / Art</th>
+        <th>Format</th>
+        <th>Dicke / Größe</th>
+        <th>Art.-Nummer</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 </div>
 
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyDnbN2tWjYxArD4CXrGeN5VuRnFUCCKyon029iIZlSTIdRWJ1AwBpTsctRejzqpgjT/exec"; // Hier deine Google Apps Script Web-App URL einfügen
+const scriptURL = "HIER_DEINE_WEBAPP_URL_EINFÜGEN"; 
+// z.B. https://script.google.com/macros/s/AKfycb.../exec
 
-    document.getElementById('orderForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        const data = {};
-        formData.forEach((value, key) => data[key] = value);
+// Formular absenden
+document.getElementById("bestellForm").addEventListener("submit", function(e) {
+  e.preventDefault();
 
-        fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify(data),
-            headers: { "Content-Type": "application/json" }
-        })
-        .then(res => res.json())
-        .then(resData => {
-            console.log("Antwort:", resData);
-            this.reset();
-            loadEntries();
-        })
-        .catch(err => console.error("Fehler beim Speichern:", err));
-    });
+  const formData = new FormData(this);
+  const params = new URLSearchParams(formData);
 
-    function loadEntries() {
-        fetch(API_URL)
-            .then(res => res.json())
-            .then(data => {
-                if (!Array.isArray(data) || data.length === 0) {
-                    document.getElementById('entries').innerHTML = '<p style="font-size:18px;">Noch keine Bestellungen vorhanden.</p>';
-                    return;
-                }
-                let table = `<table>
-                    <tr>
-                        <th>Bereich</th>
-                        <th>Anzahl</th>
-                        <th>Produkt</th>
-                        <th>Farbe / Art</th>
-                        <th>Format</th>
-                        <th>Dicke / Gr&ouml;&szlig;e</th>
-                        <th>Art.-Nr.</th>
-                    </tr>`;
-                data.forEach(item => {
-                    table += `
-                    <tr>
-                        <td>${item["Bereich"] || ""}</td>
-                        <td>${item["Anzahl"] || ""}</td>
-                        <td>${item["Produkt"] || ""}</td>
-                        <td>${item["Farbe / Art"] || ""}</td>
-                        <td>${item["Format"] || ""}</td>
-                        <td>${item["Dicke / Größe"] || ""}</td>
-                        <td>${item["Art.-Nummer"] || ""}</td>
-                    </tr>`;
-                });
-                table += `</table>`;
-                document.getElementById('entries').innerHTML = table;
-            })
-            .catch(err => console.error("Fehler beim Laden:", err));
-    }
+  fetch(scriptURL, {
+    method: "POST",
+    body: params
+  })
+  .then(res => res.text())
+  .then(text => {
+    alert("Bestellung gespeichert!");
+    this.reset();
+    ladeBestellungen(); // Liste neu laden
+  })
+  .catch(err => {
+    console.error("Fehler:", err);
+    alert("Fehler beim Speichern");
+  });
+});
 
-    document.addEventListener('DOMContentLoaded', loadEntries);
+// Liste laden
+function ladeBestellungen() {
+  fetch(scriptURL) // einfacher GET → kein CORS-Problem
+    .then(res => res.json())
+    .then(daten => {
+      const tbody = document.querySelector("#bestellTabelle tbody");
+      tbody.innerHTML = "";
+      daten.forEach(zeile => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${zeile.Bereich || ""}</td>
+          <td>${zeile.Anzahl || ""}</td>
+          <td>${zeile.Produkt || ""}</td>
+          <td>${zeile.Farbe || ""}</td>
+          <td>${zeile.Format || ""}</td>
+          <td>${zeile.Dicke || ""}</td>
+          <td>${zeile.ArtNr || ""}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    })
+    .catch(err => console.error("Fehler beim Laden:", err));
+}
+
+// Beim Laden der Seite direkt Liste anzeigen
+ladeBestellungen();
 </script>
 
 </body>
 </html>
-
