@@ -6,29 +6,36 @@
 <style>
   body {
     font-family: Arial, sans-serif;
-    margin: 20px;
     background: #f8f9fa;
-    color: #333;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  .container {
+    max-width: 800px;
+    width: 100%;
+    background: #fff;
+    padding: 20px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   }
   h1, h2 {
+    text-align: center;
     color: #444;
   }
   form {
-    background: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     margin-bottom: 20px;
   }
   form label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-weight: bold;
   }
-  form input {
+  form input, form select {
     width: 100%;
-    padding: 6px;
-    margin-bottom: 12px;
+    padding: 8px;
+    margin-bottom: 14px;
     border: 1px solid #ccc;
     border-radius: 4px;
   }
@@ -39,6 +46,8 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    width: 100%;
+    font-size: 16px;
   }
   form button:hover {
     background: #0056b3;
@@ -47,7 +56,7 @@
     width: 100%;
     border-collapse: collapse;
     background: #fff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   }
   th, td {
     padding: 10px;
@@ -65,33 +74,55 @@
 </head>
 <body>
 
-<h1>Neue Bestellung</h1>
-<form id="bestellForm">
-  <label>Bereich: <input type="text" name="Bereich" required></label>
-  <label>Anzahl: <input type="number" name="Anzahl" required></label>
-  <label>Produkt: <input type="text" name="Produkt" required></label>
-  <label>Farbe: <input type="text" name="Farbe"></label>
-  <label>Format: <input type="text" name="Format"></label>
-  <label>Dicke: <input type="text" name="Dicke"></label>
-  <label>ArtNr: <input type="text" name="ArtNr"></label>
-  <button type="submit">Bestellung speichern</button>
-</form>
+<div class="container">
+  <h1>Neue Bestellung</h1>
+  <form id="bestellForm">
+    <label>Bereich:
+      <input type="text" name="Bereich" required>
+    </label>
+    <label>Anzahl:
+      <input type="number" name="Anzahl" required>
+    </label>
+    <label>Produkt:
+      <input type="text" name="Produkt" required>
+    </label>
+    <label>Farbe:
+      <input type="text" name="Farbe">
+    </label>
+    <label>Format:
+      <select name="Format" required>
+        <option value="">Bitte wählen</option>
+        <option value="A3">A3</option>
+        <option value="A4">A4</option>
+        <option value="A5">A5</option>
+        <option value="A6">A6</option>
+      </select>
+    </label>
+    <label>Dicke:
+      <input type="text" name="Dicke">
+    </label>
+    <label>ArtNr:
+      <input type="text" name="ArtNr">
+    </label>
+    <button type="submit">Bestellung speichern</button>
+  </form>
 
-<h2>Gespeicherte Bestellungen</h2>
-<table id="bestellTabelle">
-  <thead>
-    <tr>
-      <th>Bereich</th>
-      <th>Anzahl</th>
-      <th>Produkt</th>
-      <th>Farbe</th>
-      <th>Format</th>
-      <th>Dicke</th>
-      <th>ArtNr</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+  <h2>Gespeicherte Bestellungen</h2>
+  <table id="bestellTabelle">
+    <thead>
+      <tr>
+        <th>Bereich</th>
+        <th>Anzahl</th>
+        <th>Produkt</th>
+        <th>Farbe</th>
+        <th>Format</th>
+        <th>Dicke</th>
+        <th>ArtNr</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
 
 <script>
 const scriptURL = "https://script.google.com/macros/s/AKfycbx2QIfcMMAAxp2GSzs2yhQGwYWGdy3YV_QLFoF0ySuIT2MD3fjTldc10dSEzd8VwI4D/exec"; 
@@ -106,7 +137,7 @@ document.getElementById("bestellForm").addEventListener("submit", function(e) {
     .then(text => {
       console.log("Antwort:", text);
       this.reset();
-      ladeBestellungen(); // sofort neu laden
+      ladeBestellungen();
     })
     .catch(err => {
       console.error("Fehler:", err);
@@ -137,7 +168,6 @@ function ladeBestellungen() {
     .catch(err => console.error("Fehler beim Laden:", err));
 }
 
-// Beim Laden der Seite direkt Liste anzeigen
 document.addEventListener("DOMContentLoaded", ladeBestellungen);
 </script>
 
